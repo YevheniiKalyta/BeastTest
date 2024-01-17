@@ -35,6 +35,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""2e3f0746-c235-4f1d-82fa-550c6382609c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Inventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""7962a619-3a37-4d52-94a2-90e4e0a11627"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -92,6 +110,39 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c5162c7b-2a66-4d53-98c4-b8c9b27534db"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e40e30ff-10d1-4498-9312-4e2a585da1bf"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Inventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6884b2f2-371f-475f-8139-c0db2dca09ca"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Inventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -101,6 +152,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         // DefaultMap
         m_DefaultMap = asset.FindActionMap("DefaultMap", throwIfNotFound: true);
         m_DefaultMap_Movement = m_DefaultMap.FindAction("Movement", throwIfNotFound: true);
+        m_DefaultMap_Interact = m_DefaultMap.FindAction("Interact", throwIfNotFound: true);
+        m_DefaultMap_Inventory = m_DefaultMap.FindAction("Inventory", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -163,11 +216,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_DefaultMap;
     private List<IDefaultMapActions> m_DefaultMapActionsCallbackInterfaces = new List<IDefaultMapActions>();
     private readonly InputAction m_DefaultMap_Movement;
+    private readonly InputAction m_DefaultMap_Interact;
+    private readonly InputAction m_DefaultMap_Inventory;
     public struct DefaultMapActions
     {
         private @PlayerInputActions m_Wrapper;
         public DefaultMapActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_DefaultMap_Movement;
+        public InputAction @Interact => m_Wrapper.m_DefaultMap_Interact;
+        public InputAction @Inventory => m_Wrapper.m_DefaultMap_Inventory;
         public InputActionMap Get() { return m_Wrapper.m_DefaultMap; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -180,6 +237,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Movement.started += instance.OnMovement;
             @Movement.performed += instance.OnMovement;
             @Movement.canceled += instance.OnMovement;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
+            @Inventory.started += instance.OnInventory;
+            @Inventory.performed += instance.OnInventory;
+            @Inventory.canceled += instance.OnInventory;
         }
 
         private void UnregisterCallbacks(IDefaultMapActions instance)
@@ -187,6 +250,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Movement.started -= instance.OnMovement;
             @Movement.performed -= instance.OnMovement;
             @Movement.canceled -= instance.OnMovement;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
+            @Inventory.started -= instance.OnInventory;
+            @Inventory.performed -= instance.OnInventory;
+            @Inventory.canceled -= instance.OnInventory;
         }
 
         public void RemoveCallbacks(IDefaultMapActions instance)
@@ -207,5 +276,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     public interface IDefaultMapActions
     {
         void OnMovement(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
+        void OnInventory(InputAction.CallbackContext context);
     }
 }
