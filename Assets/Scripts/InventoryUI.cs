@@ -9,8 +9,9 @@ public class InventoryUI : MonoBehaviour
     Inventory inventory;
     [SerializeField] List<InventorySlot> slots = new List<InventorySlot>();
     [SerializeField] CursorFollowingItem cursorFollowingItem;
-    public Dictionary<InventorySlot, Item> itemsDisplayed = new Dictionary<InventorySlot, Item>();
+
     private int startSlot;
+    public int StartSlot { get { return startSlot; } }
 
     private void Start()
     {
@@ -20,6 +21,19 @@ public class InventoryUI : MonoBehaviour
         }
         InventorySlot.OnStartDrag += OnStartItemDrag;
         InventorySlot.OnStopDrag += OnStopItemDrag;
+        InventorySlot.OnCancelDrag += OnCancelDrag;
+    }
+
+    private void OnCancelDrag(int endSlot)
+    {
+        if (startSlot != -1)
+        {
+            inventory.Swap(inventory.Items, startSlot, startSlot);
+        }
+        else
+        {
+            inventory.AddItem(cursorFollowingItem.CurrentItem);
+        }
     }
 
     private void OnStopItemDrag(int endSlot)
@@ -34,6 +48,13 @@ public class InventoryUI : MonoBehaviour
             else
             {
                 inventory.AddItemAtIndex(cursorFollowingItem.CurrentItem, endSlot);
+            }
+        }
+        else
+        {
+            if (startSlot != -1)
+            {
+                inventory.RemoveItemFromSlot(cursorFollowingItem.CurrentItem, startSlot);
             }
         }
         startSlot = -1;
@@ -71,12 +92,10 @@ public class InventoryUI : MonoBehaviour
             if (i < inventory.Items.Length)
             {
                 slots[i].SetItemToSlot(inventory.Items[i]);
-                itemsDisplayed.Add(slots[i], inventory.Items[i]);
             }
             else
             {
                 slots[i].SetItemToSlot(null);
-                itemsDisplayed.Add(slots[i], null);
             }
         }
     }

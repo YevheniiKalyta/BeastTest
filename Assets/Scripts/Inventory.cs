@@ -40,11 +40,15 @@ public class Inventory
     }
 
 
-    public void AddItemAtIndex(Item item,int index)
+    public void AddItemAtIndex(Item item,int index, bool force = false)
     {
-        if (items[index] == null)
+        if (items[index] == null || force == true)
         {
             items[index] = item;
+        }
+        else if (items[index].itemSO ==  item.itemSO)
+        {
+            items[index].amount += item.amount;
         }
         else
         {
@@ -82,12 +86,34 @@ public class Inventory
         }
     }
 
-    public void Swap(Item[] arr, int indexA, int indexB)
+    public void RemoveItemFromSlot(Item item, int index)
     {
 
-        Item tmp = arr[indexA];
-        arr[indexA] = arr[indexB];
-        arr[indexB] = tmp;
+            if (items[index]?.itemSO == item.itemSO)
+            {
+                items[index].amount -= item.amount;
+                if (items[index].amount <= 0)
+                {
+                    items[index] = null;
+                }
+                OnInventoryChanged?.Invoke();
+            }
+    }
+
+    public void Swap(Item[] arr, int indexA, int indexB)
+    {
+        if (arr[indexA]?.itemSO == arr[indexB]?.itemSO && arr[indexA]?.itemSO != null && indexA!=indexB)
+        {
+            arr[indexB].amount += arr[indexA].amount;
+            arr[indexA] = null;
+        }
+        else
+        {
+            Item tmp = arr[indexA];
+            arr[indexA] = arr[indexB];
+            arr[indexB] = tmp;
+
+        }
         OnInventoryChanged?.Invoke();
     }
 }

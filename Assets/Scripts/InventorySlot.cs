@@ -1,13 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using TMPro;
-using UnityEditor.UI;
-using UnityEditorInternal.Profiling.Memory.Experimental;
-using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class InventorySlot : InteractableSlot
 {
@@ -34,6 +25,6 @@ public class InventorySlot : InteractableSlot
     {
         base.SetItem();
         OnStopDrag?.Invoke(slotIndex);
-        inventorySystem.CursorFollowingItem.SetItem(null);
+        inventorySystem.CursorFollowingItem.SetItemToSlot(null);
     }
 }

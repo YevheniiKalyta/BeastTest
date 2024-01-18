@@ -14,6 +14,7 @@ public class InventorySystem : MonoBehaviour
     public SceneItemsPool sceneItemsPool;
     [SerializeField] private CursorFollowingItem cursorFollowingItem;
     public CursorFollowingItem CursorFollowingItem { get { return cursorFollowingItem; } }
+    public InventoryUI InventoryUI { get { return inventoryUI; } }
 
     private void Awake()
     {
@@ -24,18 +25,12 @@ public class InventorySystem : MonoBehaviour
 
     }
 
-    private void Start()
-    {
-        var sceneItem = sceneItemsPool.objectPool.Get();
-        sceneItem.transform.position = new Vector3(2.03f, 0.1f, 0f);
-    }
-
     public void TryDropItem()
     {
         var sceneItem = sceneItemsPool.objectPool.Get();
         sceneItem.SetItem(new Item(cursorFollowingItem.CurrentItem));
         inventory.RemoveItem(cursorFollowingItem.CurrentItem);
-        cursorFollowingItem.SetItem(null);
+        cursorFollowingItem.SetItemToSlot(null);
         Vector3 sceneItemPos = new Vector3(transform.position.x, 0.1f, transform.position.z);
         sceneItem.transform.position = sceneItemPos;
 
@@ -69,6 +64,10 @@ public class InventorySystem : MonoBehaviour
     public void AddItem(Item item)
     {
         inventory.AddItem(item);
+    }
+    public void AddItemAtIndex(Item item,int index, bool force = false)
+    {
+        inventory.AddItemAtIndex(item,index, force);
     }
     public void RemoveItem(Item item)
     {

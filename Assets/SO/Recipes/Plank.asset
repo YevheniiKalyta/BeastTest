@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6406b68f202d63408c50d00802d25f1, type: 3}
   m_Name: Plank
   m_EditorClassIdentifier: 
-  finalItem: {fileID: 11400000, guid: 8547d8e653d93c44d96576e1fdc0d7c5, type: 2}
+  finalItem:
+    itemSO: {fileID: 11400000, guid: 8547d8e653d93c44d96576e1fdc0d7c5, type: 2}
+    amount: 1
   itemsToCombine:
-  - {fileID: 11400000, guid: db22780598e82924ea58bd2d0a888df7, type: 2}
-  - {fileID: 11400000, guid: db22780598e82924ea58bd2d0a888df7, type: 2}
-  successChance: 95
+  - itemSO: {fileID: 11400000, guid: db22780598e82924ea58bd2d0a888df7, type: 2}
+    amount: 1
+  - itemSO: {fileID: 11400000, guid: db22780598e82924ea58bd2d0a888df7, type: 2}
+    amount: 1
+  successChance: 0

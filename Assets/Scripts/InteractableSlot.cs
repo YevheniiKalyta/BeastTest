@@ -10,6 +10,8 @@ public class InteractableSlot : ItemHolder, IDropHandler, IDragHandler, IPointer
     [SerializeField] protected InventorySystem inventorySystem;
     public static Action<int> OnStartDrag;
     public static Action<int> OnStopDrag;
+    public static Action<int> OnCancelDrag;
+
     public void OnDrop(PointerEventData eventData)
     {
         SetItem();
@@ -27,9 +29,9 @@ public class InteractableSlot : ItemHolder, IDropHandler, IDragHandler, IPointer
 
     public virtual void OnPointerDown(PointerEventData eventData)
     {
-        if (currentItem != null)
+        if (currentItem != null && currentItem.itemSO != null)
         {
-            inventorySystem.CursorFollowingItem.SetItem(new Item(currentItem));
+            inventorySystem.CursorFollowingItem.SetItemToSlot(new Item(currentItem));
             SetItemToSlot(null);
         }
     }
