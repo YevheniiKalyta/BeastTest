@@ -4,19 +4,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class SceneItemsPool: MonoBehaviour
+public class SceneItemsPool : MonoBehaviour
 {
     [SerializeField] private SceneItem sceneItemPrefab;
     public ObjectPool<SceneItem> objectPool;
 
     private void Awake()
     {
-        objectPool = new ObjectPool<SceneItem> (CreateMethod, OnGetAction, OnReleaseAction);
+        objectPool = new ObjectPool<SceneItem>(CreateMethod, OnGetAction, OnReleaseAction);
     }
 
     protected virtual void OnReleaseAction(SceneItem sceneItem) => sceneItem.gameObject.SetActive(false);
 
-    protected virtual void OnGetAction(SceneItem sceneItem) => sceneItem.gameObject.SetActive(true);
+    protected virtual void OnGetAction(SceneItem sceneItem)
+    {
+        sceneItem.gameObject.SetActive(true);
+        StartCoroutine(sceneItem.UnpickableTime());
+    }
 
     protected virtual SceneItem CreateMethod() => Instantiate(sceneItemPrefab);
 
@@ -24,6 +28,7 @@ public class SceneItemsPool: MonoBehaviour
     {
         SceneItem sceneItem = objectPool.Get();
         sceneItem.transform.position = position;
+        StartCoroutine(sceneItem.UnpickableTime());
         sceneItem.SetItem(item);
         return null;
     }

@@ -1,31 +1,39 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
+using UnityEditor.UI;
+using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class InventorySlot : MonoBehaviour
+public class InventorySlot : InteractableSlot
 {
-    [SerializeField] private Item currentItem;
-    [SerializeField] private Image itemImg;
-    [SerializeField] private TextMeshProUGUI itemAmountText;
-    [SerializeField] private CanvasGroup slotCG;
 
-    public void SetItemToSlot(Item item)
+    private int slotIndex;
+
+
+    public void SetIndex(int ind)
     {
-        currentItem = item;
+        slotIndex = ind;
+    }
 
-        if(currentItem != null)
+
+    public override void OnPointerDown(PointerEventData eventData)
+    {
+        if (currentItem != null)
         {
-            slotCG.alpha = 1;
+            base.OnPointerDown(eventData);
+            OnStartDrag?.Invoke(slotIndex);
         }
-        else
-        {
-            slotCG.alpha = 0;
-            return;
-        }
-         
-        itemImg.sprite = currentItem.itemSO.itemImg;
-        itemAmountText.text = currentItem.amount.ToString();
+    }
+
+    protected override void SetItem()
+    {
+        base.SetItem();
+        OnStopDrag?.Invoke(slotIndex);
+        inventorySystem.CursorFollowingItem.SetItem(null);
     }
 }

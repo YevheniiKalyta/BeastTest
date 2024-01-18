@@ -1,40 +1,93 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Inventory
 {
-    private List<Item> items = new List<Item>();
+    private Item[] items;
 
-    public List<Item> Items { get { return items; } }
+    public Item[] Items { get { return items; } }
 
     public Action OnInventoryChanged;
 
-    public Inventory()
+    public Inventory(int capacity)
     {
-        items = new List<Item>();
+        items = new Item[capacity];
     }
 
     public void AddItem(Item item)
     {
-        if(item.itemSO.stackable)
+        if (item.itemSO.stackable)
         {
-            for (int i = 0; i < items.Count; i++)
+            for (int i = 0; i < items.Length; i++)
             {
-                if (items[i].itemSO == item.itemSO)
+                if (items[i]?.itemSO == item.itemSO)
                 {
                     items[i].amount += item.amount;
                     OnInventoryChanged?.Invoke();
                     return;
                 }
             }
-            items.Add(item);
+            InsertInFirstEmptySlot(item);
         }
         else
         {
-            items.Add(item);
+            InsertInFirstEmptySlot(item);
         }
+        OnInventoryChanged?.Invoke();
+    }
+
+
+    public void AddItemAtIndex(Item item,int index)
+    {
+        if (items[index] == null)
+        {
+            items[index] = item;
+        }
+        else
+        {
+            InsertInFirstEmptySlot(item);
+        }
+        OnInventoryChanged?.Invoke();
+    }
+
+    private void InsertInFirstEmptySlot(Item item)
+    {
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (items[i] == null)
+            {
+                items[i] = item;
+                break;
+            }
+        }
+    }
+
+    public void RemoveItem(Item item)
+    {
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (items[i]?.itemSO == item.itemSO)
+            {
+                items[i].amount -= item.amount;
+                if (items[i].amount <= 0)
+                {
+                    items[i] = null;
+                }
+                OnInventoryChanged?.Invoke();
+                return;
+            }
+        }
+    }
+
+    public void Swap(Item[] arr, int indexA, int indexB)
+    {
+
+        Item tmp = arr[indexA];
+        arr[indexA] = arr[indexB];
+        arr[indexB] = tmp;
         OnInventoryChanged?.Invoke();
     }
 }
