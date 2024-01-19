@@ -16,13 +16,16 @@ public class CraftingSystem : MonoBehaviour
     [SerializeField] float craftingSpeed;
     Sequence sequence;
     private CraftingRecipeSO currentRecipe;
+    [SerializeField] InventorySystem inventorySystem;
+
+
+    public int GetCraftingSlotCount() => itemHolders.Count;
     private void Start()
     {
         for (int i = 0; i < itemHolders.Count; i++)
         {
             itemHolders[i].OnSetItemToSlot += CheckForFinalItem;
         }
-        UpdateCraftingSlots();
         finalItemSlot.SetItemToSlot(finalItemSlot.CurrentItem);
     }
 
@@ -36,7 +39,7 @@ public class CraftingSystem : MonoBehaviour
 
     private void CheckForFinalItem()
     {
-        if (sequence == null || !sequence.IsPlaying())
+        if ((sequence == null || !sequence.IsPlaying()) && !removingItems)
         {
             currentRecipe = GetRecipe();
             if (currentRecipe != null)
@@ -106,22 +109,24 @@ public class CraftingSystem : MonoBehaviour
     private void TryToCraft()
     {
         float chance = UnityEngine.Random.Range(0f, 1f);
+        removingItems = true;
         if (chance <= currentRecipe.successChance)
         {
-            finalItemSlot.AddItemToSlot(new Item(currentRecipe.finalItem.itemSO, currentRecipe.finalItem.amount));
+       
+            inventorySystem.AddItemAtIndex(new Item(currentRecipe.finalItem),finalItemSlot.SlotIndex);
             RemoveItems();
-            UpdateCraftingSlots();
         }
         else
         {
             RemoveItems();
             finalItemSlot.GetComponent<Image>().DOColor(Color.red, 0.5f).OnComplete(() => { finalItemSlot.GetComponent<Image>().DOColor(Color.white, 0.5f); });
-            UpdateCraftingSlots();
         }
+        CheckForFinalItem();
     }
-
+    bool removingItems = false;
     private void RemoveItems()
     {
+        removingItems = true;
         List<Item> itemsToCombine = itemHolders.Select(x => x.CurrentItem).ToList();
         for (int i = 0; i < currentRecipe.itemsToCombine.Count; i++)
         {
@@ -130,25 +135,20 @@ public class CraftingSystem : MonoBehaviour
             {
                 if (itemsToCombine[j] != null && itemsToCombine[j].itemSO == craftingItem.itemSO)
                 {
-                    itemHolders[j].CurrentItem.amount -= craftingItem.amount;
-
+                    inventorySystem.RemoveItemAtIndex(craftingItem, itemHolders[j].SlotIndex);
                     itemsToCombine[j] = null;
                     break;
                 }
             }
         }
+        removingItems = false;
     }
 
-    private void UpdateCraftingSlots()
-    {
-        for (int i = 0; i < itemHolders.Count; i++)
-        {
-            itemHolders[i].SetItemToSlot(itemHolders[i].CurrentItem);
-        }
-    }
-
-    public void CreateFinalItem(ItemSO finalItem)
-    {
-
-    }
+    //private void UpdateCraftingSlots()
+    //{
+    //    for (int i = 0; i < itemHolders.Count; i++)
+    //    {
+    //        itemHolders[i].SetItemToSlot(itemHolders[i].CurrentItem);
+    //    }
+    //}
 }

@@ -9,6 +9,7 @@ public class InventorySystem : MonoBehaviour
 {
     private Inventory inventory;
     [SerializeField] private int inventoryCapacity = 8;
+    [SerializeField] CraftingSystem craftingSystem;
     [SerializeField] private InventoryUI inventoryUI;
     [SerializeField] SceneItem sceneItemPrefab;
     public SceneItemsPool sceneItemsPool;
@@ -18,7 +19,7 @@ public class InventorySystem : MonoBehaviour
 
     private void Awake()
     {
-        inventory = new Inventory(inventoryCapacity);
+        inventory = new Inventory(inventoryUI.GetSlotCount());
         inventoryUI.SetInventory(inventory);
 
 
@@ -65,12 +66,33 @@ public class InventorySystem : MonoBehaviour
     {
         inventory.AddItem(item);
     }
-    public void AddItemAtIndex(Item item,int index, bool force = false)
+    public void AddItemAtIndex(Item item, int index, bool force = false)
     {
-        inventory.AddItemAtIndex(item,index, force);
+        inventory.AddItemAtIndex(item, index, force);
     }
     public void RemoveItem(Item item)
     {
         inventory.RemoveItem(item);
+    }
+    public void RemoveItemAtIndex(Item item, int index)
+    {
+        inventory.RemoveItemFromSlot(item, index);
+    }
+
+    public void Swap(Item[] arr, int indexA, int indexB)
+    {
+        if (cursorFollowingItem.CurrentItem?.itemSO == arr[indexB]?.itemSO && cursorFollowingItem.CurrentItem?.itemSO != null && indexA != indexB)
+        {
+            arr[indexB].amount += cursorFollowingItem.CurrentItem.amount;
+            arr[indexA] = null;
+        }
+        else
+        {
+            Item tmp = cursorFollowingItem.CurrentItem;
+            arr[indexA] = arr[indexB];
+            arr[indexB] = tmp;
+
+        }
+        inventory.OnInventoryChanged?.Invoke();
     }
 }

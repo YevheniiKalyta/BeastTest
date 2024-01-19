@@ -13,8 +13,12 @@ public class ItemHolder : MonoBehaviour
     [SerializeField] protected TextMeshProUGUI itemAmountText;
     public Action OnSetItemToSlot;
     public Item CurrentItem { get { return currentItem; } }
-    public void SetItemToSlot(Item item)
+    public virtual void SetItemToSlot(Item item)
     {
+        if (item?.amount == 0)
+        {
+            item = null;
+        }
         currentItem = item;
         if (item != null && item.itemSO != null && item.amount > 0)
         {
@@ -29,13 +33,13 @@ public class ItemHolder : MonoBehaviour
 
         itemImg.sprite = currentItem.itemSO?.itemImg;
         itemAmountText.text = currentItem.amount.ToString();
-        OnSetItemToSlot?.Invoke();
+      
     }
 
     public void AddItemToSlot(Item item)
     {
         if (item == null) return;
-        if (currentItem.itemSO == item.itemSO)
+        if (currentItem?.itemSO == item.itemSO)
         {
             currentItem.amount += item.amount;
         }
@@ -44,9 +48,25 @@ public class ItemHolder : MonoBehaviour
             SetItemToSlot(item);
         }
 
+        UpdateVisual();
+    }
 
+    private void UpdateVisual()
+    {
         itemImg.sprite = currentItem.itemSO?.itemImg;
         itemAmountText.text = currentItem.amount.ToString();
         OnSetItemToSlot?.Invoke();
+    }
+
+    public void RemoveItemFromSlot(Item item)
+    {
+        if (item == null) return;
+        if (currentItem?.itemSO == item.itemSO)
+        {
+            currentItem.amount -= item.amount;
+        }
+
+
+        UpdateVisual();
     }
 }

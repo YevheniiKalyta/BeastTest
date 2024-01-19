@@ -3,16 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem.Interactions;
 
 public class InventoryUI : MonoBehaviour
 {
     Inventory inventory;
-    [SerializeField] List<InventorySlot> slots = new List<InventorySlot>();
+    [SerializeField] InventorySystem inventorySystem;
+    [SerializeField] List<InteractableSlot> slots = new List<InteractableSlot>();
     [SerializeField] CursorFollowingItem cursorFollowingItem;
 
     private int startSlot;
     public int StartSlot { get { return startSlot; } }
-
+    public int GetSlotCount() { return slots.Count; }
     private void Start()
     {
         for (int i = 0; i < slots.Count; i++)
@@ -24,11 +26,13 @@ public class InventoryUI : MonoBehaviour
         InventorySlot.OnCancelDrag += OnCancelDrag;
     }
 
+
+
     private void OnCancelDrag(int endSlot)
     {
         if (startSlot != -1)
         {
-            inventory.Swap(inventory.Items, startSlot, startSlot);
+            inventorySystem.Swap(inventory.Items, startSlot, startSlot);
         }
         else
         {
@@ -42,22 +46,18 @@ public class InventoryUI : MonoBehaviour
         {
             if (startSlot != -1)
             {
-                inventory.Swap(inventory.Items, startSlot, endSlot);
+                if (inventory.Items[startSlot]?.itemSO == null && cursorFollowingItem.CurrentItem?.itemSO != inventory.Items[endSlot]?.itemSO)
+                {
+                    inventorySystem.Swap(inventory.Items, startSlot, endSlot);
+                }
+                else
+                {
+                    inventory.AddItemAtIndex(cursorFollowingItem.CurrentItem, endSlot);
+                }
 
-            }
-            else
-            {
-                inventory.AddItemAtIndex(cursorFollowingItem.CurrentItem, endSlot);
+                startSlot = -1;
             }
         }
-        else
-        {
-            if (startSlot != -1)
-            {
-                inventory.RemoveItemFromSlot(cursorFollowingItem.CurrentItem, startSlot);
-            }
-        }
-        startSlot = -1;
     }
 
     private void OnStartItemDrag(int slotIndex)

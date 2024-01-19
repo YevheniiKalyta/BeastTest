@@ -15,26 +15,28 @@ public class CraftingSlot : InteractableSlot
             {
                 if (inventorySystem.CursorFollowingItem.CurrentItem.itemSO == currentItem.itemSO)
                 {
-                    currentItem.amount += inventorySystem.CursorFollowingItem.CurrentItem.amount;
                     SetItemToSlot(currentItem);
-                }
-                else
-                {
-                    Item itemToSwap = currentItem;
-                    SetItemToSlot(inventorySystem.CursorFollowingItem.CurrentItem);
-                    inventorySystem.AddItemAtIndex(itemToSwap, inventorySystem.InventoryUI.StartSlot, true);
                 }
             }
             else
             {
                 SetItemToSlot(inventorySystem.CursorFollowingItem.CurrentItem);
             }
-            OnStopDrag?.Invoke(-1);
+            OnStopDrag?.Invoke(slotIndex);
         }
         else
         {
-            OnCancelDrag?.Invoke(-1);
+            OnCancelDrag?.Invoke(slotIndex);
         }
         inventorySystem.CursorFollowingItem.SetItemToSlot(null);
+    }
+
+    public override void SetItemToSlot(Item item)
+    {
+        base.SetItemToSlot(item);
+        if (canBeFilled)
+        {
+            OnSetItemToSlot?.Invoke();
+        }
     }
 }

@@ -44,7 +44,7 @@ public class Inventory
     {
         if (items[index] == null || force == true)
         {
-            items[index] = item;
+            items[index] = new Item(item);
         }
         else if (items[index].itemSO ==  item.itemSO)
         {
@@ -52,7 +52,7 @@ public class Inventory
         }
         else
         {
-            InsertInFirstEmptySlot(item);
+            AddItem(item);
         }
         OnInventoryChanged?.Invoke();
     }
@@ -100,20 +100,5 @@ public class Inventory
             }
     }
 
-    public void Swap(Item[] arr, int indexA, int indexB)
-    {
-        if (arr[indexA]?.itemSO == arr[indexB]?.itemSO && arr[indexA]?.itemSO != null && indexA!=indexB)
-        {
-            arr[indexB].amount += arr[indexA].amount;
-            arr[indexA] = null;
-        }
-        else
-        {
-            Item tmp = arr[indexA];
-            arr[indexA] = arr[indexB];
-            arr[indexB] = tmp;
 
-        }
-        OnInventoryChanged?.Invoke();
-    }
 }

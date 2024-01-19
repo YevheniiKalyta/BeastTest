@@ -3,13 +3,7 @@ using UnityEngine.EventSystems;
 public class InventorySlot : InteractableSlot
 {
 
-    private int slotIndex;
 
-
-    public void SetIndex(int ind)
-    {
-        slotIndex = ind;
-    }
 
 
     public override void OnPointerDown(PointerEventData eventData)
@@ -17,7 +11,7 @@ public class InventorySlot : InteractableSlot
         if (currentItem != null)
         {
             base.OnPointerDown(eventData);
-            OnStartDrag?.Invoke(slotIndex);
+   
         }
     }
 
