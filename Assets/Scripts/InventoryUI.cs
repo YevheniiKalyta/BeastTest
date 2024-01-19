@@ -37,14 +37,7 @@ public class InventoryUI : MonoBehaviour
 
     private void OnCancelDrag(int endSlot)
     {
-        if (startSlot != -1)
-        {
-            inventorySystem.Swap(inventory.Items, startSlot, startSlot);
-        }
-        else
-        {
             inventory.AddItem(cursorFollowingItem.CurrentItem);
-        }
     }
 
     private void OnStopItemDrag(int endSlot)
