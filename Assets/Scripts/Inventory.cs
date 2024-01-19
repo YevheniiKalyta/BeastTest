@@ -7,18 +7,21 @@ using UnityEngine;
 public class Inventory
 {
     private Item[] items;
+    private int realCapacity;
 
     public Item[] Items { get { return items; } }
 
     public Action OnInventoryChanged;
 
-    public Inventory(int capacity)
+    public Inventory(int realCapacity, int additionalCapacity)
     {
-        items = new Item[capacity];
+        items = new Item[realCapacity + additionalCapacity];
+        this.realCapacity = realCapacity;
     }
 
-    public void AddItem(Item item)
+    public bool AddItem(Item item)
     {
+        bool itemAdded = false;
         if (item.itemSO.stackable)
         {
             for (int i = 0; i < items.Length; i++)
@@ -27,26 +30,27 @@ public class Inventory
                 {
                     items[i].amount += item.amount;
                     OnInventoryChanged?.Invoke();
-                    return;
+                    return true;
                 }
             }
-            InsertInFirstEmptySlot(item);
+            itemAdded = InsertInFirstEmptySlot(item);
         }
         else
         {
-            InsertInFirstEmptySlot(item);
+            itemAdded = InsertInFirstEmptySlot(item);
         }
         OnInventoryChanged?.Invoke();
+        return itemAdded;
     }
 
 
-    public void AddItemAtIndex(Item item,int index, bool force = false)
+    public void AddItemAtIndex(Item item, int index, bool force = false)
     {
         if (items[index] == null || force == true)
         {
             items[index] = new Item(item);
         }
-        else if (items[index].itemSO ==  item.itemSO)
+        else if (items[index].itemSO == item.itemSO && items[index].itemSO.stackable)
         {
             items[index].amount += item.amount;
         }
@@ -57,16 +61,17 @@ public class Inventory
         OnInventoryChanged?.Invoke();
     }
 
-    private void InsertInFirstEmptySlot(Item item)
+    private bool InsertInFirstEmptySlot(Item item)
     {
-        for (int i = 0; i < items.Length; i++)
+        for (int i = 0; i < realCapacity; i++)
         {
             if (items[i] == null)
             {
                 items[i] = item;
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     public void RemoveItem(Item item)
@@ -89,15 +94,15 @@ public class Inventory
     public void RemoveItemFromSlot(Item item, int index)
     {
 
-            if (items[index]?.itemSO == item.itemSO)
+        if (items[index]?.itemSO == item.itemSO)
+        {
+            items[index].amount -= item.amount;
+            if (items[index].amount <= 0)
             {
-                items[index].amount -= item.amount;
-                if (items[index].amount <= 0)
-                {
-                    items[index] = null;
-                }
-                OnInventoryChanged?.Invoke();
+                items[index] = null;
             }
+            OnInventoryChanged?.Invoke();
+        }
     }
 
 

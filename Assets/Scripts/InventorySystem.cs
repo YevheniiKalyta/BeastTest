@@ -11,7 +11,6 @@ public class InventorySystem : MonoBehaviour
     [SerializeField] private int inventoryCapacity = 8;
     [SerializeField] CraftingSystem craftingSystem;
     [SerializeField] private InventoryUI inventoryUI;
-    [SerializeField] SceneItem sceneItemPrefab;
     public SceneItemsPool sceneItemsPool;
     [SerializeField] private CursorFollowingItem cursorFollowingItem;
     public CursorFollowingItem CursorFollowingItem { get { return cursorFollowingItem; } }
@@ -19,18 +18,14 @@ public class InventorySystem : MonoBehaviour
 
     private void Awake()
     {
-        inventory = new Inventory(inventoryUI.GetSlotCount());
+        inventory = new Inventory(inventoryCapacity, craftingSystem.GetCraftingSlotCount() + 1);
         inventoryUI.SetInventory(inventory);
-
-
-
     }
 
     public void TryDropItem()
     {
         var sceneItem = sceneItemsPool.objectPool.Get();
         sceneItem.SetItem(new Item(cursorFollowingItem.CurrentItem));
-        inventory.RemoveItem(cursorFollowingItem.CurrentItem);
         cursorFollowingItem.SetItemToSlot(null);
         Vector3 sceneItemPos = new Vector3(transform.position.x, 0.1f, transform.position.z);
         sceneItem.transform.position = sceneItemPos;
@@ -41,8 +36,10 @@ public class InventorySystem : MonoBehaviour
     {
         if (other.TryGetComponent(out SceneItem sceneItem) && sceneItem.readyToPickUp)
         {
-            inventory.AddItem(sceneItem.Item);
-            sceneItemsPool.objectPool.Release(sceneItem);
+            if (inventory.AddItem(sceneItem.Item))
+            {
+                sceneItemsPool.objectPool.Release(sceneItem);
+            }
         }
     }
 

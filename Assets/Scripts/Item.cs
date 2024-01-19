@@ -15,8 +15,11 @@ public class Item
     }
     public Item(Item item)
     {
-        this.itemSO = item.itemSO;
-        this.amount = item.amount;
+        if (item != null)
+        {
+            this.itemSO = item.itemSO;
+            this.amount = item.amount;
+        }
     }
 
     public Sprite GetItemImg()

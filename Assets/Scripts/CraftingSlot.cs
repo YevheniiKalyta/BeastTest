@@ -34,7 +34,7 @@ public class CraftingSlot : InteractableSlot
     public override void SetItemToSlot(Item item)
     {
         base.SetItemToSlot(item);
-        if (canBeFilled)
+        if (item != null)
         {
             OnSetItemToSlot?.Invoke();
         }

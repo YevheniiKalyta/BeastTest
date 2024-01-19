@@ -41,10 +41,16 @@ public class CraftingSystem : MonoBehaviour
     {
         if ((sequence == null || !sequence.IsPlaying()) && !removingItems)
         {
+
             currentRecipe = GetRecipe();
             if (currentRecipe != null)
             {
-                AnimateCrafting();
+                if (finalItemSlot.CurrentItem == null || (finalItemSlot.CurrentItem.itemSO != null
+                 && currentRecipe.finalItem.itemSO == finalItemSlot.CurrentItem.itemSO
+                 && finalItemSlot.CurrentItem.itemSO.stackable))
+                {
+                    AnimateCrafting();
+                }
             }
         }
     }
@@ -108,12 +114,12 @@ public class CraftingSystem : MonoBehaviour
 
     private void TryToCraft()
     {
-        float chance = UnityEngine.Random.Range(0f, 1f);
+        float chance = UnityEngine.Random.Range(0f, 100f);
         removingItems = true;
         if (chance <= currentRecipe.successChance)
         {
-       
-            inventorySystem.AddItemAtIndex(new Item(currentRecipe.finalItem),finalItemSlot.SlotIndex);
+
+            inventorySystem.AddItemAtIndex(new Item(currentRecipe.finalItem), finalItemSlot.SlotIndex);
             RemoveItems();
         }
         else

@@ -20,4 +20,4 @@ MonoBehaviour:
     amount: 1
   - itemSO: {fileID: 11400000, guid: aebb41ee1a3b58646b3e8ed24f907595, type: 2}
     amount: 1
-  successChance: 80
+  successChance: 60

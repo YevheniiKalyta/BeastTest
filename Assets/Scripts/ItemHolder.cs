@@ -32,7 +32,7 @@ public class ItemHolder : MonoBehaviour
 
 
         itemImg.sprite = currentItem.itemSO?.itemImg;
-        itemAmountText.text = currentItem.amount.ToString();
+        itemAmountText.text = currentItem.itemSO.stackable ? currentItem.amount.ToString():"";
       
     }
 

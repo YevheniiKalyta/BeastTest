@@ -1,3 +1,5 @@
+using Cinemachine;
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +13,12 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] InventorySystem inventorySystem;
     [SerializeField] List<InteractableSlot> slots = new List<InteractableSlot>();
     [SerializeField] CursorFollowingItem cursorFollowingItem;
-
+    [SerializeField] RectTransform mainPanel;
+    [SerializeField] Canvas canvas;
+    [SerializeField] float animationTime = 1f;
+    [SerializeField] CinemachineVirtualCamera virtualCamera;
+    bool uiOn;
+    Tween tween;
     private int startSlot;
     public int StartSlot { get { return startSlot; } }
     public int GetSlotCount() { return slots.Count; }
@@ -74,7 +81,23 @@ public class InventoryUI : MonoBehaviour
 
     internal void ToggleInventoryUI()
     {
+        uiOn = !uiOn;
+        if (tween != null)
+        {
+            tween.Kill();
+        }
+        if (uiOn)
+        {
 
+            tween = mainPanel.DOAnchorPos(new Vector2(Screen.width / 4, 0f), animationTime).OnStart(() => canvas.enabled = true).SetEase(Ease.OutBack);
+            DOTween.To(() => virtualCamera.m_Lens.LensShift.x, x => virtualCamera.m_Lens.LensShift.x = x, 0.25f, animationTime);
+        }
+        else
+        {
+            tween = mainPanel.DOAnchorPos(new Vector2(Screen.width, 0f), animationTime).OnComplete(() => canvas.enabled = false).SetEase(Ease.OutBack);
+            DOTween.To(() => virtualCamera.m_Lens.LensShift.x, x => virtualCamera.m_Lens.LensShift.x = x, 0f, animationTime);
+        }
+        tween.easeOvershootOrAmplitude = 0.5f;
     }
 
     private void RefreshInventory()
