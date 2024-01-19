@@ -21,6 +21,7 @@ public class InteractableSlot : ItemHolder, IDropHandler, IDragHandler, IPointer
     public void OnDrop(PointerEventData eventData)
     {
         SetItem();
+        SoundManager.Instance.PlaySFXOneShot("buttonClickHi");
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -49,10 +50,11 @@ public class InteractableSlot : ItemHolder, IDropHandler, IDragHandler, IPointer
         {
             var pickedItem = new Item(currentItem.itemSO, 1);
 
-            inventorySystem.RemoveItemAtIndex(pickedItem,slotIndex);
+            inventorySystem.RemoveItemAtIndex(pickedItem, slotIndex);
             inventorySystem.CursorFollowingItem.SetItemToSlot(pickedItem);
         }
-                 OnStartDrag?.Invoke(slotIndex);
+        OnStartDrag?.Invoke(slotIndex);
+        SoundManager.Instance.PlaySFXOneShot("buttonClick");
 
     }
 

@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] InstructionsUI instructionsUI;
     [SerializeField] SphereCollider triggerZone;
     [SerializeField] InventorySystem inventorySystem;
+    bool footstepsPlaying;
     public InventorySystem InventorySystem { get { return inventorySystem; } }
     void Awake()
     {
@@ -34,6 +35,19 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("Horizontal", input.x);
         animator.SetFloat("Vertical", input.y);
         animator.SetFloat("Speed", motionVector.sqrMagnitude);
+        if(motionVector.sqrMagnitude > 0)
+        {
+            if (!footstepsPlaying)
+            {
+                SoundManager.Instance.PlaySFXLoop("footsteps");
+                footstepsPlaying = true;
+            }
+        }
+        else if(footstepsPlaying)
+        {
+            SoundManager.Instance.StopSXFLoop("footsteps");
+            footstepsPlaying = false;
+        }
     }
 
     public void OnInteractionButtonPressed(InputAction.CallbackContext callbackContext)

@@ -97,6 +97,7 @@ public class InventoryUI : MonoBehaviour
             tween = mainPanel.DOAnchorPos(new Vector2(Screen.width, 0f), animationTime).OnComplete(() => canvas.enabled = false).SetEase(Ease.OutBack);
             DOTween.To(() => virtualCamera.m_Lens.LensShift.x, x => virtualCamera.m_Lens.LensShift.x = x, 0f, animationTime);
         }
+        SoundManager.Instance.PlaySFXOneShot("inventory");
         tween.easeOvershootOrAmplitude = 0.5f;
     }
 

@@ -30,6 +30,7 @@ public class Inventory
                 {
                     items[i].amount += item.amount;
                     OnInventoryChanged?.Invoke();
+                    SoundManager.Instance.PlaySFXOneShot("pickup");
                     return true;
                 }
             }
@@ -40,6 +41,10 @@ public class Inventory
             itemAdded = InsertInFirstEmptySlot(item);
         }
         OnInventoryChanged?.Invoke();
+        if (itemAdded)
+        {
+            SoundManager.Instance.PlaySFXOneShot("pickup");
+        }
         return itemAdded;
     }
 

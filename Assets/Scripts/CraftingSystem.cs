@@ -110,6 +110,7 @@ public class CraftingSystem : MonoBehaviour
         };
         sequence.OnComplete(() => TryToCraft());
         sequence.Play();
+        SoundManager.Instance.PlaySFXOneShot("craftingProcess");
     }
 
     private void TryToCraft()
@@ -121,11 +122,13 @@ public class CraftingSystem : MonoBehaviour
 
             inventorySystem.AddItemAtIndex(new Item(currentRecipe.finalItem), finalItemSlot.SlotIndex);
             RemoveItems();
+            SoundManager.Instance.PlaySFXOneShot("craftGood");
         }
         else
         {
             RemoveItems();
             finalItemSlot.GetComponent<Image>().DOColor(Color.red, 0.5f).OnComplete(() => { finalItemSlot.GetComponent<Image>().DOColor(Color.white, 0.5f); });
+            SoundManager.Instance.PlaySFXOneShot("craftBad");
         }
         CheckForFinalItem();
     }

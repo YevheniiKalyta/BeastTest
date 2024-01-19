@@ -29,6 +29,7 @@ public class InventorySystem : MonoBehaviour
         cursorFollowingItem.SetItemToSlot(null);
         Vector3 sceneItemPos = new Vector3(transform.position.x, 0.1f, transform.position.z);
         sceneItem.transform.position = sceneItemPos;
+        SoundManager.Instance.PlaySFXOneShot("drop");
 
     }
 
